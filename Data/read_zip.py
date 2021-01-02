@@ -1,13 +1,13 @@
 import csv
-from zipfile import ZipFile
 import os
+from zipfile import ZipFile
 
 
 def read_csv_from_zip(path: str):
 
     # Потом подставить сюда путь из ввода пользователя, предварительно обработав.
-    # os.chdir(os.getcwd())
-    myzip = ZipFile('hotels.zip', 'r')
+    # os.chdir(path)
+    myzip = ZipFile("hotels.zip", "r")
     for filename in myzip.namelist():
         myzip.extract(filename)
 
@@ -15,7 +15,7 @@ def read_csv_from_zip(path: str):
     all_hotels_filtred = []
     files = {}
     for file in os.listdir():
-        if file.endswith('.csv'):
+        if file.endswith(".csv"):
             files[file] = open(file)
             read_csv.append(csv.reader(files[file]))
 
@@ -47,4 +47,3 @@ def filter_hotel(hotel: list):
     except ValueError:
         return None
     return hotel
-
