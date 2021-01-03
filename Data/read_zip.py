@@ -30,7 +30,7 @@ def read_csv_from_zip(path: str):
                     first_row_in_file = False
             else:
                 filtered_hotel = filter_hotel(hotel, column_names)
-                if filtered_hotel:
+                if filtered_hotel is not None:
                     all_hotels_filtred.append(filtered_hotel)
 
     for file in files:
