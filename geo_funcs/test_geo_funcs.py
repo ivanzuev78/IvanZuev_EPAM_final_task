@@ -1,4 +1,4 @@
-from geo_funcs import get_city_center
+from geo_funcs.geo_funcs import get_city_center
 
 
 def test_get_city_center():
