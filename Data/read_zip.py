@@ -1,5 +1,6 @@
 import csv
 import os
+from typing import Dict, List, Optional
 from zipfile import ZipFile
 
 
@@ -13,37 +14,58 @@ def read_csv_from_zip(path: str):
 
     read_csv = []
     all_hotels_filtred = []
-    files = {}
+    files = []
     for file in os.listdir():
         if file.endswith(".csv"):
-            files[file] = open(file)
-            read_csv.append(csv.reader(files[file]))
+            files.append(open(file))
+            read_csv.append(csv.reader(files[-1]))
 
     for csv_reader in read_csv:
+        first_row_in_file = True
+        column_names = {}
         for hotel in csv_reader:
-            filtered_hotel = filter_hotel(hotel)
-            if filtered_hotel:
-                all_hotels_filtred.append(filtered_hotel)
+            if first_row_in_file:
+                for column, col_name in enumerate(hotel):
+                    column_names[col_name] = column
+                    first_row_in_file = False
+            else:
+                filtered_hotel = filter_hotel(hotel, column_names)
+                if filtered_hotel:
+                    all_hotels_filtred.append(filtered_hotel)
+
+    for file in files:
+        file.close()
 
     return all_hotels_filtred
 
 
-def filter_hotel(hotel: list):
-    if len(hotel) != 6:
+def filter_hotel(hotel: List, column_names: Dict) -> Optional[Dict]:
+    hotel_dict = {}
+    if len(hotel) != len(column_names):
         return None
     if not all(hotel):
         return None
     try:
-        hotel[0] = int(float(hotel[0]))
+        hotel[column_names["Id"]] = int(float(hotel[column_names["Id"]]))
     except ValueError:
         return None
     try:
-        hotel[4] = float(hotel[4])
-        if hotel[4] > 90 or hotel[4] < -90:
+        hotel[column_names["Latitude"]] = float(hotel[column_names["Latitude"]])
+        if (
+            hotel[column_names["Latitude"]] > 90
+            or hotel[column_names["Latitude"]] < -90
+        ):
             raise ValueError
-        hotel[5] = float(hotel[5])
-        if hotel[4] > 180 or hotel[5] < -180:
+        hotel[column_names["Longitude"]] = float(hotel[column_names["Longitude"]])
+        if (
+            hotel[column_names["Longitude"]] > 180
+            or hotel[column_names["Longitude"]] < -180
+        ):
             raise ValueError
     except ValueError:
         return None
-    return hotel
+
+    for col in column_names:
+        hotel_dict[col] = hotel[column_names[col]]
+
+    return hotel_dict
