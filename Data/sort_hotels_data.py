@@ -1,11 +1,11 @@
-def sort_hotels_by_countries_and_sities(hotels: list):
+def sort_hotels_by_countries_and_cities(hotels: list):
     hotels_dict = {}
     for hotel in hotels:
-        if hotel[2] not in hotels_dict:
-            hotels_dict[hotel[2]] = {hotel[3]: []}
-        elif hotel[3] not in hotels_dict[hotel[2]]:
-            hotels_dict[hotel[2]][hotel[3]] = []
-        hotels_dict[hotel[2]][hotel[3]].append(hotel)
+        if hotel["Country"] not in hotels_dict:
+            hotels_dict[hotel["Country"]] = {hotel["City"]: []}
+        elif hotel["City"] not in hotels_dict[hotel["Country"]]:
+            hotels_dict[hotel["Country"]][hotel["City"]] = []
+        hotels_dict[hotel["Country"]][hotel["City"]].append(hotel)
     return hotels_dict
 
 
