@@ -1,3 +1,6 @@
+from typing import Dict, List, Tuple
+
+
 def sort_hotels_by_countries_and_cities(hotels: list):
     hotels_dict = {}
     for hotel in hotels:
@@ -9,7 +12,7 @@ def sort_hotels_by_countries_and_cities(hotels: list):
     return hotels_dict
 
 
-def choose_biggest_cities(hotels_dict: dict) -> list:
+def choose_biggest_cities(hotels_dict: Dict) -> List[Tuple]:
     list_of_biggest_cities = []
     for country in hotels_dict:
         list_of_biggest_cities.append(
