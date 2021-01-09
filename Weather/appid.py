@@ -58,8 +58,7 @@ def parse_date(date: str) -> datetime.datetime:
 
 
 def clean_appid_old_date():
-    with open("openweathermap_appid.json", "r") as file:
-        all_appid_data = json.load(file)
+    global all_appid_data
 
     appid_to_del = []
 
