@@ -45,6 +45,15 @@ def add_address_to_all_hotels(hotels: List[Dict], max_threads=100) -> None:
         pool.map(add_address_to_one_hotel, hotels)
 
 
+def get_all_city_centers(all_hotels: Dict) -> Dict:
+    all_centers = {}
+    for country in all_hotels:
+        all_centers[country] = {}
+        for city in all_hotels[country]:
+            all_centers[country][city] = get_city_center(all_hotels[country][city])
+    return all_centers
+
+
 #
 # column_names = {
 #     "Id": 0,
