@@ -4,10 +4,8 @@ from typing import Dict, List, Optional
 from zipfile import ZipFile
 
 
-def read_csv_from_zip(path: str):
+def read_csv_from_zip() -> List[Dict]:
 
-    # Потом подставить сюда путь из ввода пользователя, предварительно обработав.
-    # os.chdir(path)
     myzip = ZipFile("hotels.zip", "r")
     for filename in myzip.namelist():
         myzip.extract(filename)

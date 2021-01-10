@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
 
-def sort_hotels_by_countries_and_cities(hotels: list):
+def sort_hotels_by_countries_and_cities(hotels: List[Dict]) -> Dict[Dict[Dict]]:
     hotels_dict = {}
     for hotel in hotels:
         if hotel["Country"] not in hotels_dict:
