@@ -5,7 +5,11 @@ from zipfile import ZipFile
 
 
 def read_csv_from_zip() -> List[Dict]:
-
+    """
+    Unpack .zip file, read all .csv files, filter invalid data and return list of hotels.
+    Hotel format: dict{'column': value}
+    :return: List
+    """
     myzip = ZipFile("hotels.zip", "r")
     for filename in myzip.namelist():
         myzip.extract(filename)
@@ -38,6 +42,18 @@ def read_csv_from_zip() -> List[Dict]:
 
 
 def filter_hotel(hotel: List, column_names: Dict) -> Optional[Dict]:
+    """
+    Filter hotels data and create dict.
+    Checks:
+    1) All columns have values
+    2) Id is integer
+    3) Latitude and Longitude are float
+    4) Latitude belongs to the interval [-90, 90]
+    4) Longitude belongs to the interval [-180, 180]
+    :param hotel: List of values from .csv file
+    :param column_names: Dict {'column name in .csv file': index of hotels list}
+    :return: Optional[Dict]
+    """
     hotel_dict = {}
     if len(hotel) != len(column_names):
         return None
