@@ -5,6 +5,11 @@ from geopy import Nominatim
 
 
 def get_city_center(hotels: List[Dict]) -> Tuple[float, float]:
+    """
+    Get list of hotels and return city center: Tuple[Latitude, Longitude]
+    :param hotels:
+    :return:
+    """
     min_latitude = None
     max_latitude = None
     min_longitude = None
@@ -37,6 +42,11 @@ def get_address_by_position(latitude: float, longitude: float) -> str:
 
 
 def add_address_to_one_hotel(hotel: Dict) -> None:
+    """
+    Get hotel by link and add address to it.
+    :param hotel:
+    :return: None
+    """
     hotel["Address"] = get_address_by_position(hotel["Latitude"], hotel["Longitude"])
 
 
@@ -52,36 +62,3 @@ def get_all_city_centers(all_hotels: Dict) -> Dict:
         for city in all_hotels[country]:
             all_centers[country][city] = get_city_center(all_hotels[country][city])
     return all_centers
-
-
-#
-# column_names = {
-#     "Id": 0,
-#     "Name": 1,
-#     "Country": 2,
-#     "City": 3,
-#     "Latitude": 4,
-#     "Longitude": 5,
-# }
-# hotels_list = [
-#     ["1", "min_latitude", "US", "City", 0, 12.2345],
-#     ["2", "max_latitude", "US", "City", 90, 42],
-#     ["3", "min_longitude", "US", "City", 23, 0],
-#     ["4", "max_longitude", "US", "City", 55, 90],
-#     ["5", "Name", "US", "City", 78, 74.999],
-#     ["6", "Name", "US", "City", 33, 59.001],
-#     ["7", "Name", "US", "City", 89, 12],
-# ]
-# hotels = [
-#     {col: col_value for col, col_value in zip(column_names, hotel)}
-#     for hotel in hotels_list
-# ]
-# t1 = time.time()
-# add_address_to_all_hotels(hotels, max_threads=2)
-#
-# # for i in hotels:
-# #     add_address_to_one_hotel(i)
-# t2 = time.time()
-#
-# print(t2 - t1)
-# print(*hotels, sep="\n")
