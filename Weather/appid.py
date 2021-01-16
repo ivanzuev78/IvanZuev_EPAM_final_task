@@ -3,8 +3,11 @@ import json
 import os
 from typing import Optional
 
-with open("openweathermap_appid.json", "r") as file:
-    all_appid_data = json.load(file)
+if os.path.exists("openweathermap_appid.json"):
+    with open("openweathermap_appid.json", "r") as file:
+        all_appid_data = json.load(file)
+else:
+    all_appid_data = {}
 
 
 def get_appid() -> Optional[str]:
@@ -25,23 +28,21 @@ def get_appid() -> Optional[str]:
 
     if appid:
         with open("openweathermap_appid.json", "w") as file:
-            json.dump(all_appid_data, file)
+            json.dump(all_appid_data, file, indent=4)
 
     return appid
 
 
 def add_appid(appid: str) -> None:
-
+    global all_appid_data
     if os.path.exists("openweathermap_appid.json"):
         with open("openweathermap_appid.json", "r") as file:
             all_appid_data = json.load(file)
-    else:
-        all_appid_data = {}
 
     if appid not in all_appid_data:
         all_appid_data[appid] = {}
         with open("openweathermap_appid.json", "w") as file:
-            json.dump(all_appid_data, file)
+            json.dump(all_appid_data, file, indent=4)
 
 
 def close_appid_for_this_day(appid: str) -> None:
@@ -50,7 +51,7 @@ def close_appid_for_this_day(appid: str) -> None:
 
     all_appid_data[appid][str(datetime.datetime.utcnow().date())] = 1000
     with open("openweathermap_appid.json", "w") as file:
-        json.dump(all_appid_data, file)
+        json.dump(all_appid_data, file, indent=4)
 
 
 def parse_date(date: str) -> datetime.datetime:
@@ -71,4 +72,4 @@ def clean_appid_old_date():
         del all_appid_data[key][date]
 
     with open("openweathermap_appid.json", "w") as file:
-        json.dump(all_appid_data, file)
+        json.dump(all_appid_data, file, indent=4)
