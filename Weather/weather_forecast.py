@@ -1,3 +1,4 @@
+import datetime
 import json
 import time
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -72,13 +73,43 @@ def get_all_weather(latitude: float, longitude: float) -> Dict:
 def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
     weather_date = []
     for day in weather["Historical"]:
-        sorted_day_by_temperature = sorted(day["hourly"], key=lambda x: x["dt"])
+        sorted_day_by_temperature = sorted(day["hourly"], key=lambda x: x["temp"])
         weather_date.append(
             {
-                "date": (day["hourly"][0]["dt"]),
-                "min": sorted_day_by_temperature[0],
-                "max": sorted_day_by_temperature[-1],
+                "date": day["hourly"][0]["dt"],
+                "min": sorted_day_by_temperature[0]["temp"],
+                "max": sorted_day_by_temperature[-1]["temp"],
+            }
+        )
+    for day in weather["Forecast"]:
+        weather_date.append(
+            {
+                "date": day["dt"],
+                "min": day["temp"]["min"],
+                "max": day["temp"]["max"],
             }
         )
 
-    pass
+    return weather_date
+
+
+if __name__ == "__main__":
+    data = get_all_weather(59.973325, 30.389575)
+
+    for day in get_min_and_max_temp_per_day(data):
+        date = day["date"]
+
+    data = sorted(get_min_and_max_temp_per_day(data), key=lambda x: x["date"])
+
+    x = [datetime.datetime.fromtimestamp(day["date"]) for day in data]
+    y_min = [day["min"] for day in data]
+    y_max = [day["max"] for day in data]
+
+    import matplotlib.pyplot as plt
+
+    plt.plot(x, y_min)
+    plt.plot(x, y_max)
+    plt.show()
+
+    # with open('get_all_weather_return.json', 'w') as file:
+    #     json.dump(data, file, indent=4)
