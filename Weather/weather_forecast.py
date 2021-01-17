@@ -36,13 +36,12 @@ def get_all_historical_weather(latitude: float, longitude: float):
 
         return wrapper
 
-    current_time = int(time.time())
+    current_time = int(time.time() + time.timezone)
     with ThreadPoolExecutor(max_workers=100) as pool:
         all_weather_data = pool.map(
             get_one_day_hist_weather(latitude, longitude, get_appid),
             (current_time - i * 86400 for i in range(6)),
         )
-
     return list(all_weather_data)
 
 
@@ -78,14 +77,14 @@ def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
             }
         )
 
-    return weather_date
+    return sorted(weather_date, key=lambda x: x["date"])
 
 
 if __name__ == "__main__":
     data = get_all_weather(40.189476, -74.92503)
 
-    for day in get_min_and_max_temp_per_day(data):
-        date = day["date"]
+    # for day in get_min_and_max_temp_per_day(data):
+    #     date = day["date"]
 
     data = sorted(get_min_and_max_temp_per_day(data), key=lambda x: x["date"])
 
