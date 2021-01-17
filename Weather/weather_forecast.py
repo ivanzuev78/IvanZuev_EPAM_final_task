@@ -9,18 +9,6 @@ from Weather.appid import get_appid
 import requests
 
 
-def get_current_weather_from_openweathermap(
-    latitude: float, longitude: float, appid: str
-) -> Dict:
-    if not appid:
-        raise ValueError("Invalid appid. Seems like they are over.")
-    weather_response = requests.get(
-        f"http://api.openweathermap.org/data/2.5/"
-        f"weather?lat={latitude}&lon={longitude}&APPID={appid}&units=metric"
-    )
-    return json.loads(weather_response.text)
-
-
 def get_current_and_forecast_weather(
     latitude: float, longitude: float, appid: str
 ) -> Dict:
@@ -94,7 +82,7 @@ def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
 
 
 if __name__ == "__main__":
-    data = get_all_weather(59.973325, 30.389575)
+    data = get_all_weather(40.189476, -74.92503)
 
     for day in get_min_and_max_temp_per_day(data):
         date = day["date"]

@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
 
-def sort_hotels_by_countries_and_cities(hotels: List[Dict]) -> Dict[Dict[List[Dict]]]:
+def sort_hotels_by_countries_and_cities(hotels: List[Dict]) -> Dict:
     """
     Get list of hotels and returns dict of this data:
     Dict structure:

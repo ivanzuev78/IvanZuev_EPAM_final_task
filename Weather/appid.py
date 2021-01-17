@@ -1,3 +1,16 @@
+"""
+In the file "openweathermap_appid.json" there are all appid.
+Appid are needed to get request to openweathermap.com.
+There are some restrictions of using free accounts (only 1000 requests per day),
+so this module remember the number of requests of each appid and return working appid.
+I don't want to push file with appid to GitHub, so you can ask me for it.
+Or it can be created manually:
+
+if __name__ == '__main__':
+    add_appid('your_appid')
+
+
+"""
 import datetime
 import json
 import os
@@ -11,6 +24,10 @@ else:
 
 
 def get_appid() -> Optional[str]:
+    """
+    Return actual appid.
+    :return:
+    """
     global all_appid_data
 
     date = str(datetime.datetime.utcnow().date())
@@ -34,6 +51,11 @@ def get_appid() -> Optional[str]:
 
 
 def add_appid(appid: str) -> None:
+    """
+    Function to add appid to the file and use it.
+    :param appid:
+    :return:
+    """
     global all_appid_data
     if os.path.exists("openweathermap_appid.json"):
         with open("openweathermap_appid.json", "r") as file:
@@ -46,6 +68,11 @@ def add_appid(appid: str) -> None:
 
 
 def close_appid_for_this_day(appid: str) -> None:
+    """
+    If there are some problems with appid, it can be closed for this day.
+    :param appid: str
+    :return: None
+    """
     with open("openweathermap_appid.json", "r") as file:
         all_appid_data = json.load(file)
 
@@ -55,10 +82,19 @@ def close_appid_for_this_day(appid: str) -> None:
 
 
 def parse_date(date: str) -> datetime.datetime:
+    """
+    Accept data in "YYYY-MM-DD" format and return datetime.datetime object.
+    :param date: str
+    :return: datetime.datetime
+    """
     return datetime.datetime(int(date[:4]), int(date[5:7]), int(date[8:10]))
 
 
 def clean_appid_old_date():
+    """
+    Clean "openweathermap_appid.json" by deleting the previous dates.
+    :return:
+    """
     global all_appid_data
 
     appid_to_del = []

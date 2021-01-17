@@ -47,7 +47,7 @@ def add_address_to_one_hotel(hotel: Dict) -> None:
     :param hotel:
     :return: None
     """
-    hotel["Address"] = get_address_by_position(hotel["Latitude"], hotel["Longitude"])
+    hotel["Address"] = get_address_by_position(hotel["Latitude"], hotel["Latitude"])
 
 
 def add_address_to_all_hotels(hotels: List[Dict], max_threads=100) -> None:
@@ -56,6 +56,13 @@ def add_address_to_all_hotels(hotels: List[Dict], max_threads=100) -> None:
 
 
 def get_all_city_centers(all_hotels: Dict) -> Dict:
+    """
+    all_centers format: {county: {city: [Latitude, Latitude]} }
+    print(all_centers[country][city])
+    # >>> Tuple(Latitude, Latitude)
+    :param all_hotels:
+    :return:
+    """
     all_centers = {}
     for country in all_hotels:
         all_centers[country] = {}
