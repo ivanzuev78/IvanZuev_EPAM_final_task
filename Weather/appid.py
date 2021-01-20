@@ -16,6 +16,8 @@ import json
 import os
 from typing import Optional
 
+print(os.getcwd())
+
 if os.path.exists("openweathermap_appid.json"):
     with open("openweathermap_appid.json", "r") as file:
         all_appid_data = json.load(file)
