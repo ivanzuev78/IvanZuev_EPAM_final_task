@@ -18,6 +18,10 @@ if __name__ == "__main__":
     path_output = input("Path for output data: ")
     numb_of_threads = input("number of threads: ")
     appid = input("Введите ключ для получения погоды, если его нет:")
+    try:
+        numb_of_threads = int(numb_of_threads)
+    except ValueError:
+        numb_of_threads = 4
 
     if appid:
         from Weather.appid import add_appid
@@ -44,6 +48,7 @@ if __name__ == "__main__":
         all_city_centers[county][city]["Weather"] = get_all_weather(
             all_city_centers[county][city]["Latitude"],
             all_city_centers[county][city]["Longitude"],
+            numb_of_threads,
         )
 
     # Переходим в директорию для сохранения
