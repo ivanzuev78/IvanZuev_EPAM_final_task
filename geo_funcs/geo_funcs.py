@@ -1,10 +1,10 @@
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from geopy import Nominatim
 
 
-def get_city_center(hotels: List[Dict]) -> Tuple[float, float]:
+def get_city_center(hotels: List[Dict]) -> Dict:
     """
     Get list of hotels and return city center: Tuple[Latitude, Longitude]
     :param hotels:
@@ -31,7 +31,10 @@ def get_city_center(hotels: List[Dict]) -> Tuple[float, float]:
             elif hotel["Longitude"] > max_longitude:
                 max_longitude = hotel["Longitude"]
 
-    return (min_latitude + max_latitude) / 2, (min_longitude + max_longitude) / 2
+    return {
+        "Latitude": (min_latitude + max_latitude) / 2,
+        "Longitude": (min_longitude + max_longitude) / 2,
+    }
 
 
 def get_address_by_position(latitude: float, longitude: float) -> str:
