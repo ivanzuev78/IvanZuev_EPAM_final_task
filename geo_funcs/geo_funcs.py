@@ -55,17 +55,17 @@ def add_address_to_all_hotels(hotels: List[Dict], max_threads=100) -> None:
         pool.map(add_address_to_one_hotel, hotels)
 
 
-def get_all_city_centers(all_hotels: Dict) -> Dict:
+def get_biggest_cities_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
     """
     all_centers format: {county: {city: [Latitude, Latitude]} }
     print(all_centers[country][city])
     # >>> Tuple(Latitude, Latitude)
+    :param biggest_cities:
     :param all_hotels:
     :return:
     """
     all_centers = {}
-    for country in all_hotels:
+    for country, city in biggest_cities:
         all_centers[country] = {}
-        for city in all_hotels[country]:
-            all_centers[country][city] = get_city_center(all_hotels[country][city])
+        all_centers[country][city] = get_city_center(all_hotels[country][city])
     return all_centers

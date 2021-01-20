@@ -6,7 +6,7 @@ from Data.sort_hotels_data import (
     sort_hotels_by_countries_and_cities,
 )
 
-from geo_funcs.geo_funcs import add_address_to_all_hotels, get_all_city_centers
+from geo_funcs.geo_funcs import add_address_to_all_hotels, get_biggest_cities_centers
 
 if __name__ == "__main__":
 
@@ -24,8 +24,8 @@ if __name__ == "__main__":
     # Получаем самые большие города
     biggest_cities = choose_biggest_cities(all_hotels)
 
-    # Получаем все центры
-    all_centers = get_all_city_centers(all_hotels)
+    # Получаем все центры больших городов
+    biggest_centers = get_biggest_cities_centers(all_hotels, biggest_cities)
 
     # Доавляем адресс к каждому отелю в большом городе
     for county, city in biggest_cities:
