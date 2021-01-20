@@ -11,7 +11,7 @@ def save_all_hotels(
         "biggest_cities": biggest_cities,
     }
     with open("all_hotels_data.json", "w") as file:
-        json.dump(all_hotels_data, file)
+        json.dump(all_hotels_data, file, indent=4)
 
 
 def load_all_hotels():
