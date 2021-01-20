@@ -1,5 +1,4 @@
 import os
-from unittest.mock import MagicMock
 
 from Data.read_zip import read_csv_from_zip
 from Data.sort_hotels_data import (
@@ -37,13 +36,11 @@ if __name__ == "__main__":
     # Получаем все центры больших городов
     all_city_centers = get_all_city_centers(all_hotels, biggest_cities)
 
-    # Мокаем add_address_to_all_hotels
-    add_address_to_all_hotels = MagicMock(return_value=None)
     # проходимся по всем большим городам
     for county, city in biggest_cities:
         # Доавляем адресс к каждому отелю в большом городе
         add_address_to_all_hotels(all_hotels[county][city])
-        # Обогощаем отели в больших городах погодой
+        # Обогощаем большие города погодой
         all_city_centers[county][city]["Weather"] = get_all_weather(
             all_city_centers[county][city]["Latitude"],
             all_city_centers[county][city]["Longitude"],
