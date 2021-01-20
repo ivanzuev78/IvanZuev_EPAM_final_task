@@ -29,7 +29,7 @@ def get_one_day_historical_weather(
     return json.loads(weather_response.text)
 
 
-def get_all_historical_weather(latitude: float, longitude: float):
+def get_all_historical_weather(latitude: float, longitude: float, threads):
     def get_one_day_hist_weather(latitude, longitude, get_appid):
         def wrapper(day):
             return get_one_day_historical_weather(latitude, longitude, day, get_appid())
@@ -37,7 +37,7 @@ def get_all_historical_weather(latitude: float, longitude: float):
         return wrapper
 
     current_time = int(time.time() + time.timezone)
-    with ThreadPoolExecutor(max_workers=100) as pool:
+    with ThreadPoolExecutor(max_workers=threads) as pool:
         all_weather_data = pool.map(
             get_one_day_hist_weather(latitude, longitude, get_appid),
             (current_time - i * 86400 for i in range(6)),
@@ -45,13 +45,13 @@ def get_all_historical_weather(latitude: float, longitude: float):
     return list(all_weather_data)
 
 
-def get_all_weather(latitude: float, longitude: float) -> Dict:
+def get_all_weather(latitude: float, longitude: float, threads=4) -> Dict:
 
     current_and_forecast_weather = get_current_and_forecast_weather(
         latitude, longitude, get_appid()
     )
     return {
-        "Historical": get_all_historical_weather(latitude, longitude),
+        "Historical": get_all_historical_weather(latitude, longitude, threads),
         "Current": current_and_forecast_weather["current"],
         "Forecast": current_and_forecast_weather["daily"],
     }
