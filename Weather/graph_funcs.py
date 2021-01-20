@@ -12,7 +12,6 @@ def create_graph_with_min_and_max_temp(weather_data: Dict, country: str, city: s
     x = [datetime.datetime.fromtimestamp(day["date"]) for day in data]
     y_min = [day["min"] for day in data]
     y_max = [day["max"] for day in data]
-    fig, ax = plt.subplots()
     plt.plot(x, y_min)
     plt.plot(x, y_max)
     plt.xlabel("Date")
