@@ -1,11 +1,10 @@
 import datetime
 import os
-import time
 from typing import Dict
 
 from Data.save_data_funcs import chdir_to_country_city
 
-from Weather.weather_forecast import get_all_weather, get_min_and_max_temp_per_day
+from Weather.weather_forecast import get_min_and_max_temp_per_day
 
 import matplotlib.pyplot as plt
 
@@ -31,23 +30,3 @@ def create_graph_with_min_and_max_temp(
     plt.savefig(f"weather_{country}_{city}.jpg", pil_kwargs={"optimize": True})
     plt.clf()
     os.chdir(current_path)
-
-
-if __name__ == "__main__":
-    t1 = time.time()
-    print(t1)
-    data = get_all_weather(32.49375, -92.08275)
-    t2 = time.time()
-    print(t2 - t1)
-    data2 = get_all_weather(45.531554, 4.278685)
-    t3 = time.time()
-    print(t3 - t2)
-    data3 = get_all_weather(37.56611, -77.47481)
-    t4 = time.time()
-    print(t4 - t3)
-    create_graph_with_min_and_max_temp(data, "USA", "City")
-    create_graph_with_min_and_max_temp(data2, "USA", "1City")
-    create_graph_with_min_and_max_temp(data3, "Rus", "22City")
-    t5 = time.time()
-    print("-------------")
-    print(t5 - t4)
