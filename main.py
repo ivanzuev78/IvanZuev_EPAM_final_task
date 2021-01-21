@@ -1,6 +1,10 @@
 import os
 
 from Data.read_zip import read_csv_from_zip
+from Data.save_data_funcs import (
+    save_all_cities_centers,
+    save_all_hotels_to_csv,
+)
 from Data.sort_hotels_data import (
     choose_biggest_cities,
     sort_hotels_by_countries_and_cities,
@@ -53,8 +57,15 @@ if __name__ == "__main__":
 
     # Переходим в директорию для сохранения
     os.chdir(path_output)
+
+    # Сохраняем данные в удобном формате
+    save_all_cities_centers(all_city_centers)
+
     # Рисуем графики по наибольшим городам
     for county, city in biggest_cities:
         create_graph_with_min_and_max_temp(
             all_city_centers[county][city]["Weather"], county, city
         )
+
+    # Сохраняем все отели по городам
+    save_all_hotels_to_csv(all_hotels)
