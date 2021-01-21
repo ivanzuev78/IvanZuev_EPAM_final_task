@@ -1,3 +1,4 @@
+import json
 import os
 
 from Data.read_zip import read_csv_from_zip
@@ -14,6 +15,13 @@ from Weather.graph_funcs import create_graph_with_min_and_max_temp
 from Weather.weather_forecast import get_all_weather
 
 from geo_funcs.geo_funcs import add_address_to_all_hotels, get_all_city_centers
+
+from post_process import (
+    get_city_and_day_with_highest_temp,
+    get_city_and_day_with_highest_temp_delta,
+    get_city_and_day_with_lowest_temp,
+    get_city_with_highest_all_days_delta,
+)
 
 if __name__ == "__main__":
 
@@ -69,3 +77,21 @@ if __name__ == "__main__":
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
     save_all_cities_centers(all_city_centers)
+
+    post_process_data = {
+        "highest_temp": get_city_and_day_with_highest_temp(
+            all_city_centers, biggest_cities
+        ),
+        "lowest_temp": get_city_and_day_with_lowest_temp(
+            all_city_centers, biggest_cities
+        ),
+        "highest_temp_delta": get_city_and_day_with_highest_temp_delta(
+            all_city_centers, biggest_cities
+        ),
+        "all_days_delta": get_city_with_highest_all_days_delta(
+            all_city_centers, biggest_cities
+        ),
+    }
+
+    with open("post_process_data.json", "w") as file:
+        json.dump(post_process_data, file, indent=4)
