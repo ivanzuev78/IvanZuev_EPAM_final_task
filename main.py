@@ -35,13 +35,13 @@ if __name__ == "__main__":
     except ValueError:
         numb_of_threads = 4
 
+    os.chdir(path_input)
     if appid:
         from Weather.appid import add_appid
 
         add_appid(appid)
 
     # Переходим в директорию с отелями
-    os.chdir(path_input)
 
     # Считываем и сортируем отели
     all_hotels = sort_hotels_by_countries_and_cities(read_csv_from_zip())
