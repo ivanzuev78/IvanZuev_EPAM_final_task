@@ -58,14 +58,14 @@ if __name__ == "__main__":
     # Переходим в директорию для сохранения
     os.chdir(path_output)
 
-    # Сохраняем данные в удобном формате
-    save_all_cities_centers(all_city_centers)
-
     # Рисуем графики по наибольшим городам
     for county, city in biggest_cities:
         create_graph_with_min_and_max_temp(
             all_city_centers[county][city]["Weather"], county, city
         )
 
-    # Сохраняем все отели по городам
+    # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
     save_all_hotels_to_csv(all_hotels)
+
+    # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
+    save_all_cities_centers(all_city_centers)
