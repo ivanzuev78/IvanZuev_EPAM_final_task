@@ -22,7 +22,7 @@ def chdir_to_country_city(country: str, city: str, first_dir="") -> None:
     os.chdir(city_path)
 
 
-def save_all_hotels(
+def save_all_hotels_to_json(
     all_hotels: Dict, all_city_centers: Dict, biggest_cities: List
 ) -> None:
     all_hotels_data = {
