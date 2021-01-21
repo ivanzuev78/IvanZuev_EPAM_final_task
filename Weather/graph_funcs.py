@@ -3,32 +3,18 @@ import os
 import time
 from typing import Dict
 
+from Data.save_data_funcs import chdir_to_country_city
+
 from Weather.weather_forecast import get_all_weather, get_min_and_max_temp_per_day
 
 import matplotlib.pyplot as plt
 
 
-def chdir_to_graphic_country_city(country: str, city: str) -> None:
-    graph_path = os.path.join(os.getcwd(), "Graphics")
-    country_path = os.path.join(graph_path, country)
-    city_path = os.path.join(country_path, city)
-
-    if not os.path.exists(graph_path):
-        os.mkdir("Graphics")
-    os.chdir(graph_path)
-    if not os.path.exists(country_path):
-        os.mkdir(country)
-    os.chdir(country_path)
-    if not os.path.exists(city_path):
-        os.mkdir(city_path)
-    os.chdir(city_path)
-
-
 def create_graph_with_min_and_max_temp(
-    weather_data: Dict, country: str, city: str
+    weather_data: Dict, country: str, city: str, collect_in_folder=""
 ) -> None:
     current_path = os.getcwd()
-    chdir_to_graphic_country_city(country, city)
+    chdir_to_country_city(country, city, collect_in_folder)
 
     data = get_min_and_max_temp_per_day(weather_data)
     x = [datetime.datetime.fromtimestamp(day["date"]) for day in data]
