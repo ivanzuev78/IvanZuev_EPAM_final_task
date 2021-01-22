@@ -19,14 +19,15 @@ def create_graph_with_min_and_max_temp(
     x = [datetime.datetime.fromtimestamp(day["date"]) for day in data]
     y_min = [day["min"] for day in data]
     y_max = [day["max"] for day in data]
-    plt.plot(x, y_min)
-    plt.plot(x, y_max)
+    plt.plot(x, y_max, label="max temperature", color="r")
+    plt.plot(x, y_min, label="min temperature", color="b")
     plt.xlabel("Date")
     plt.ylabel("Temperature, °C")
     plt.xticks(rotation=90)
     plt.subplots_adjust(bottom=0.3)
     plt.grid(b=True, which="major", axis="both")
-    plt.text(x[0], max(y_max) + 2, f"{country}, {city}", fontsize=14)
+    plt.title(f"{country}, {city}")
+    plt.legend()
     plt.savefig(f"weather_{country}_{city}.jpg", pil_kwargs={"optimize": True})
     plt.clf()
     os.chdir(current_path)
