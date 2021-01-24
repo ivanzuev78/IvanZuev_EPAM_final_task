@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 
@@ -25,23 +26,25 @@ from post_process import (
 
 if __name__ == "__main__":
 
-    # Входные данные
-    path_input = input("Path to hotels.zip: ")
-    path_output = input("Path for output data: ")
-    numb_of_threads = input("number of threads: ")
-    appid = input("Введите ключ для получения погоды, если его нет:")
-    try:
-        numb_of_threads = int(numb_of_threads)
-    except ValueError:
+    parser = argparse.ArgumentParser(description="Hotels address and weather handler")
+    parser.add_argument("indir", type=str, help="Input dir")
+    parser.add_argument("outdir", type=str, help="Output dir")
+    parser.add_argument("--threads", type=int, help="Number of threads. Default: 4")
+    parser.add_argument("--appid", type=str, help="Appid to get weather")
+    args = parser.parse_args()
+
+    if args.threads:
+        numb_of_threads = args.threads
+    else:
         numb_of_threads = 4
 
-    os.chdir(path_input)
-    if appid:
+    # Переходим в директорию с отелями
+    os.chdir(args.indir)
+
+    if args.appid:
         from Weather.appid import add_appid
 
-        add_appid(appid)
-
-    # Переходим в директорию с отелями
+        add_appid(args.appid)
 
     # Считываем и сортируем отели
     all_hotels = sort_hotels_by_countries_and_cities(read_csv_from_zip())
@@ -64,7 +67,7 @@ if __name__ == "__main__":
         )
 
     # Переходим в директорию для сохранения
-    os.chdir(path_output)
+    os.chdir(args.outdir)
 
     # Рисуем графики по наибольшим городам
     for county, city in biggest_cities:
