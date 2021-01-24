@@ -12,17 +12,18 @@ from Data.sort_hotels_data import (
     sort_hotels_by_countries_and_cities,
 )
 
-from Weather.graph_funcs import create_graph_with_min_and_max_temp
-from Weather.weather_forecast import get_all_weather
-
-from geo_funcs.geo_funcs import add_address_to_all_hotels, get_all_city_centers
-
-from post_process import (
+from Post_processing.post_process import (
     get_city_and_day_with_highest_temp,
     get_city_and_day_with_highest_temp_delta,
     get_city_and_day_with_lowest_temp,
     get_city_with_highest_all_days_delta,
 )
+
+from Weather.graph_funcs import create_graph_with_min_and_max_temp
+from Weather.weather_forecast import get_all_weather
+
+from geo_funcs.geo_funcs import add_address_to_all_hotels, get_all_city_centers
+
 
 if __name__ == "__main__":
 

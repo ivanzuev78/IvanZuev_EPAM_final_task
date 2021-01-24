@@ -37,7 +37,7 @@ def get_city_and_day_highest_or_lowest_temp(
 
     :param all_city_centers:
     :param biggest_cities:
-    :param return_temp: it can be 'MIN' or 'MAX' or 'DAY_DELTA' or 'ALL_DAYS_DELTA'
+    :param return_temp: it can be 'MIN' or 'MAX', 'DAY_DELTA' or 'ALL_DAYS_DELTA'
     :return:
     """
     max_temp = None
