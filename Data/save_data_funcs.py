@@ -27,7 +27,7 @@ def save_all_hotels_to_json(
 ) -> None:
     all_hotels_data = {
         "all_hotels": all_hotels,
-        "all_city_centers": all_city_centers,
+        "biggest_city_centers": all_city_centers,
         "biggest_cities": biggest_cities,
     }
     with open("all_hotels_data.json", "w") as file:
@@ -40,7 +40,7 @@ def load_all_hotels():
 
     return (
         all_hotels_data["all_hotels"],
-        all_hotels_data["all_city_centers"],
+        all_hotels_data["biggest_city_centers"],
         all_hotels_data["biggest_cities"],
     )
 

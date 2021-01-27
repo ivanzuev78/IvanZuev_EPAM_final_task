@@ -53,12 +53,12 @@ def add_address_to_one_hotel(hotel: Dict) -> None:
     hotel["Address"] = get_address_by_position(hotel["Latitude"], hotel["Latitude"])
 
 
-def add_address_to_all_hotels(hotels: List[Dict], max_threads=100) -> None:
+def add_address_to_all_hotels(hotels: List[Dict], max_threads=4) -> None:
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
         pool.map(add_address_to_one_hotel, hotels)
 
 
-def get_all_city_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
+def get_biggest_city_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
     """
     all_centers format: {county: {city: [Latitude, Latitude]} }
     print(all_centers[country][city])
@@ -68,8 +68,7 @@ def get_all_city_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
     :return:
     """
     all_centers = {}
-    for country in all_hotels:
+    for country, city in biggest_cities:
         all_centers[country] = {}
-        for city in all_hotels[country]:
-            all_centers[country][city] = get_city_center(all_hotels[country][city])
+        all_centers[country][city] = get_city_center(all_hotels[country][city])
     return all_centers

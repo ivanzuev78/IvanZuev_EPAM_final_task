@@ -22,8 +22,7 @@ from Post_processing.post_process import (
 from Weather.graph_funcs import create_graph_with_min_and_max_temp
 from Weather.weather_forecast import get_all_weather
 
-from geo_funcs.geo_funcs import add_address_to_all_hotels, get_all_city_centers
-
+from geo_funcs.geo_funcs import add_address_to_all_hotels, get_biggest_city_centers
 
 if __name__ == "__main__":
 
@@ -54,16 +53,16 @@ if __name__ == "__main__":
     biggest_cities = choose_biggest_cities(all_hotels)
 
     # Получаем все центры больших городов
-    all_city_centers = get_all_city_centers(all_hotels, biggest_cities)
+    biggest_city_centers = get_biggest_city_centers(all_hotels, biggest_cities)
 
     # проходимся по всем большим городам
     for county, city in biggest_cities:
         # Доавляем адресс к каждому отелю в большом городе
-        add_address_to_all_hotels(all_hotels[county][city])
+        add_address_to_all_hotels(all_hotels[county][city], max_threads=numb_of_threads)
         # Обогощаем большие города погодой
-        all_city_centers[county][city]["Weather"] = get_all_weather(
-            all_city_centers[county][city]["Latitude"],
-            all_city_centers[county][city]["Longitude"],
+        biggest_city_centers[county][city]["Weather"] = get_all_weather(
+            biggest_city_centers[county][city]["Latitude"],
+            biggest_city_centers[county][city]["Longitude"],
             numb_of_threads,
         )
 
@@ -73,27 +72,27 @@ if __name__ == "__main__":
     # Рисуем графики по наибольшим городам
     for county, city in biggest_cities:
         create_graph_with_min_and_max_temp(
-            all_city_centers[county][city]["Weather"], county, city
+            biggest_city_centers[county][city]["Weather"], county, city
         )
 
     # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
     save_all_hotels_to_csv(all_hotels)
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
-    save_all_cities_centers(all_city_centers)
+    save_all_cities_centers(biggest_city_centers)
 
     post_process_data = {
         "highest_temp": get_city_and_day_with_highest_temp(
-            all_city_centers, biggest_cities
+            biggest_city_centers, biggest_cities
         ),
         "lowest_temp": get_city_and_day_with_lowest_temp(
-            all_city_centers, biggest_cities
+            biggest_city_centers, biggest_cities
         ),
         "highest_temp_delta": get_city_and_day_with_highest_temp_delta(
-            all_city_centers, biggest_cities
+            biggest_city_centers, biggest_cities
         ),
         "all_days_delta": get_city_with_highest_all_days_delta(
-            all_city_centers, biggest_cities
+            biggest_city_centers, biggest_cities
         ),
     }
 

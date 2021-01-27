@@ -81,9 +81,7 @@ def close_appid_for_this_day(appid: str) -> None:
     :param appid: str
     :return: None
     """
-    with open("openweathermap_appid.json", "r") as file:
-        all_appid_data = json.load(file)
-
+    global all_appid_data
     all_appid_data[appid][str(datetime.datetime.utcnow().date())] = 1000
     save_appid_data()
 
