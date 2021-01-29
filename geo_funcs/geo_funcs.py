@@ -60,7 +60,7 @@ def add_address_to_all_hotels(hotels: List[Dict], max_threads=4) -> None:
 
 def get_biggest_city_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
     """
-    all_centers format: {county: {city: [Latitude, Latitude]} }
+    all_centers format: {county: {city: {Latitude: float, Latitude: float} }
     print(all_centers[country][city])
     # >>> Tuple(Latitude, Latitude)
     :param biggest_cities:
