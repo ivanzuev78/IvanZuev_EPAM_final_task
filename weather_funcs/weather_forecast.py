@@ -4,9 +4,9 @@ import time
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict, List
 
-from Weather.appid import get_appid
-
 import requests
+
+from weather_funcs.appid import get_appid
 
 
 def get_current_and_forecast_weather(
