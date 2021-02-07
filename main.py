@@ -1,5 +1,9 @@
 import argparse
 
+from analyse_funcs.sorting_funcs import (
+    get_biggest_cities,
+    sort_hotels_by_countries_and_cities,
+)
 from reading_data.read_zip import read_csv_from_zip
 
 if __name__ == "__main__":
@@ -21,7 +25,10 @@ if __name__ == "__main__":
     # Считываем и сортируем отели
     hotels_df = read_csv_from_zip(args.indir)
 
+    dict_of_sorted_df = sort_hotels_by_countries_and_cities(hotels_df)
+
     # Получаем самые большие города
+    dict_of_biggest_cities_df = get_biggest_cities(dict_of_sorted_df)
 
     # Получаем все центры больших городов
 
