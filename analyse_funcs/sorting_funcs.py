@@ -10,16 +10,19 @@ def sort_hotels_by_countries_and_cities(df: pd.DataFrame) -> Dict:
     }
 
 
-def get_biggest_cities(dicts_of_df: Dict) -> pd.DataFrame:
-    return pd.DataFrame(
+def get_biggest_cities(dicts_of_df: Dict) -> pd.Series:
+    return pd.Series(
         {
-            "Country": list(dicts_of_df.keys()),
-            "City": [
-                max(
-                    dicts_of_df[country],
-                    key=lambda city: len(dicts_of_df[country][city]),
-                )
-                for country in dicts_of_df.keys()
-            ],
+            country: city
+            for country, city in zip(
+                dicts_of_df.keys(),
+                [
+                    max(
+                        dicts_of_df[count],
+                        key=lambda city: len(dicts_of_df[count][city]),
+                    )
+                    for count in dicts_of_df.keys()
+                ],
+            )
         }
     )

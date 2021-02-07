@@ -1,6 +1,7 @@
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict, List
 
+import pandas as pd
 from geopy import Nominatim
 
 
@@ -58,17 +59,33 @@ def add_address_to_all_hotels(hotels: List[Dict], max_threads=4) -> None:
         pool.map(add_address_to_one_hotel, hotels)
 
 
-def get_biggest_city_centers(all_hotels: Dict, biggest_cities: List) -> Dict:
+def get_biggest_city_centers(
+    big_cities_series: pd.Series, sorted_hotels_dict_of_df: Dict
+):
     """
-    all_centers format: {county: {city: {Latitude: float, Latitude: float} }
-    print(all_centers[country][city])
-    # >>> Tuple(Latitude, Latitude)
-    :param biggest_cities:
-    :param all_hotels:
+
+    :param big_cities_df:
+    :param sorted_hotels_dict_of_df:
     :return:
     """
-    all_centers = {}
-    for country, city in biggest_cities:
-        all_centers[country] = {}
-        all_centers[country][city] = get_city_center(all_hotels[country][city])
-    return all_centers
+    return pd.DataFrame(
+        {
+            "Country": [country for country, _ in big_cities_series.items()],
+            "City": [city for _, city in big_cities_series.items()],
+            "Latitude": [
+                get_middle(sorted_hotels_dict_of_df[country][city], "Latitude")
+                for country, city in big_cities_series.items()
+            ],
+            "Longitude": [
+                get_middle(sorted_hotels_dict_of_df[country][city], "Longitude")
+                for country, city in big_cities_series.items()
+            ],
+        }
+    )
+
+
+def get_middle(df, param):
+    return (
+        float(max(df[param], key=lambda x: float(x)))
+        + float(min(df[param], key=lambda x: float(x)))
+    ) / 2

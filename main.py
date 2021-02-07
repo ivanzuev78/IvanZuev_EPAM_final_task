@@ -4,6 +4,7 @@ from analyse_funcs.sorting_funcs import (
     get_biggest_cities,
     sort_hotels_by_countries_and_cities,
 )
+from geo_funcs.geo_funcs import get_biggest_city_centers
 from reading_data.read_zip import read_csv_from_zip
 
 if __name__ == "__main__":
@@ -30,9 +31,12 @@ if __name__ == "__main__":
     dict_of_sorted_df = sort_hotels_by_countries_and_cities(hotels_df)
 
     # Получаем самые большие города
-    dict_of_biggest_cities_df = get_biggest_cities(dict_of_sorted_df)
+    biggest_cities_pd_series = get_biggest_cities(dict_of_sorted_df)
 
     # Получаем все центры больших городов
+    biggest_cities_df = get_biggest_city_centers(
+        biggest_cities_pd_series, dict_of_sorted_df
+    )
 
     # проходимся по всем большим городам
 
