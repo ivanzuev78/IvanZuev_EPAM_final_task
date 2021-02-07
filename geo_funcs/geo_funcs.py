@@ -1,62 +1,41 @@
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Dict, List
+from typing import Dict, Optional
 
 import pandas as pd
-from geopy import Nominatim
+from geopy import Bing
 
 
-def get_city_center(hotels: List[Dict]) -> Dict:
-    """
-    Get list of hotels and return city center: Tuple[Latitude, Longitude]
-    :param hotels:
-    :return:
-    """
-    min_latitude = None
-    max_latitude = None
-    min_longitude = None
-    max_longitude = None
-
-    for hotel in hotels:
-        if min_latitude is None:
-            min_latitude = hotel["Latitude"]
-            max_latitude = hotel["Latitude"]
-            min_longitude = hotel["Longitude"]
-            max_longitude = hotel["Longitude"]
-        else:
-            if hotel["Latitude"] < min_latitude:
-                min_latitude = hotel["Latitude"]
-            elif hotel["Latitude"] > max_latitude:
-                max_latitude = hotel["Latitude"]
-            if hotel["Longitude"] < min_longitude:
-                min_longitude = hotel["Longitude"]
-            elif hotel["Longitude"] > max_longitude:
-                max_longitude = hotel["Longitude"]
-
-    return {
-        "Latitude": (min_latitude + max_latitude) / 2,
-        "Longitude": (min_longitude + max_longitude) / 2,
-    }
-
-
-def get_address_by_position(latitude: float, longitude: float) -> str:
-    location = Nominatim(user_agent="ivan78").reverse(f"{latitude}, {longitude}")
+def get_address_by_position(latitude: float, longitude: float) -> Optional[str]:
+    location = Bing(
+        "AjwkHHtQlWLTZW2xwqx3CM2MYHH2slk8IiDCJERgAL_3Uax_bHGOgVZe_1iaPUXH"
+    ).reverse(f"{latitude}, {longitude}")
     if location is not None:
         return location.address.replace(",", ";")
-    return "The address is not found!"
+    return None
 
 
-def add_address_to_one_hotel(hotel: Dict) -> None:
+def get_address(df_series: pd.Series):
+    return get_address_by_position(df_series["Latitude"], df_series["Longitude"])
+
+
+def add_address_to_one_hotel(df: pd.DataFrame) -> None:
     """
     Get hotel by link and add address to it.
     :param hotel:
     :return: None
     """
-    hotel["Address"] = get_address_by_position(hotel["Latitude"], hotel["Latitude"])
+    print("started")
+    df["Address"] = df.apply(get_address, axis=1)
 
 
-def add_address_to_all_hotels(hotels: List[Dict], max_threads=4) -> None:
+def add_address_to_all_hotels_in_big_cities(
+    dict_of_sorted_df: Dict, big_cities: pd.Series, max_threads
+) -> None:
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
-        pool.map(add_address_to_one_hotel, hotels)
+        pool.map(
+            add_address_to_one_hotel,
+            (dict_of_sorted_df[country][city] for country, city in big_cities.items()),
+        )
 
 
 def get_biggest_city_centers(

@@ -4,7 +4,10 @@ from analyse_funcs.sorting_funcs import (
     get_biggest_cities,
     sort_hotels_by_countries_and_cities,
 )
-from geo_funcs.geo_funcs import get_biggest_city_centers
+from geo_funcs.geo_funcs import (
+    add_address_to_all_hotels_in_big_cities,
+    get_biggest_city_centers,
+)
 from reading_data.read_zip import read_csv_from_zip
 
 if __name__ == "__main__":
@@ -38,9 +41,10 @@ if __name__ == "__main__":
         biggest_cities_pd_series, dict_of_sorted_df
     )
 
-    # проходимся по всем большим городам
-
     # Доавляем адресс к каждому отелю в большом городе
+    add_address_to_all_hotels_in_big_cities(
+        dict_of_sorted_df, biggest_cities_pd_series, max_threads=args.threads
+    )
 
     # Обогощаем большие города погодой
 
