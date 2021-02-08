@@ -10,7 +10,7 @@ def sort_hotels_by_countries_and_cities(df: pd.DataFrame) -> Dict:
     }
 
 
-def get_biggest_cities(dicts_of_df: Dict) -> pd.Series:
+def get_biggest_cities_series(dicts_of_df: Dict) -> pd.Series:
     return pd.Series(
         {
             country: city

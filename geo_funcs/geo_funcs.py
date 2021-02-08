@@ -14,7 +14,7 @@ def get_address_by_position(latitude: float, longitude: float) -> Optional[str]:
     return None
 
 
-def get_address(df_series: pd.Series):
+def get_address(df_series: pd.Series) -> str:
     return get_address_by_position(df_series["Latitude"], df_series["Longitude"])
 
 
@@ -24,7 +24,6 @@ def add_address_to_one_hotel(df: pd.DataFrame) -> None:
     :param hotel:
     :return: None
     """
-    print("started")
     df["Address"] = df.apply(get_address, axis=1)
 
 
@@ -38,9 +37,7 @@ def add_address_to_all_hotels_in_big_cities(
         )
 
 
-def get_biggest_city_centers(
-    big_cities_series: pd.Series, sorted_hotels_dict_of_df: Dict
-):
+def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_dict_of_df: Dict):
     """
 
     :param big_cities_df:
