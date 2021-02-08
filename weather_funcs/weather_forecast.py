@@ -1,9 +1,9 @@
-import datetime
 import json
 import time
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict, List
 
+import pandas as pd
 import requests
 
 from weather_funcs.appid import get_appid
@@ -40,12 +40,12 @@ def get_all_historical_weather(latitude: float, longitude: float, threads):
     with ThreadPoolExecutor(max_workers=threads) as pool:
         all_weather_data = pool.map(
             get_one_day_hist_weather(latitude, longitude, get_appid),
-            (current_time - i * 86400 for i in range(6)),
+            (current_time - i * 86400 for i in range(5)),
         )
     return list(all_weather_data)
 
 
-def get_all_weather(latitude: float, longitude: float, threads=4) -> Dict:
+def get_all_weather(latitude: float, longitude: float, threads=100) -> Dict:
 
     current_and_forecast_weather = get_current_and_forecast_weather(
         latitude, longitude, get_appid()
@@ -80,23 +80,31 @@ def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
     return sorted(weather_date, key=lambda x: x["date"])
 
 
-if __name__ == "__main__":
-    data = get_all_weather(40.189476, -74.92503)
+def get_all_weather_df(biggest_cities: pd.DataFrame, max_threads) -> pd.DataFrame:
+    with ThreadPoolExecutor(max_workers=max_threads) as pool:
+        data = pool.map(
+            get_weather(max_threads), (row[1] for row in biggest_cities.iterrows())
+        )
 
-    # for day in get_min_and_max_temp_per_day(data):
-    #     date = day["date"]
+    biggest_cities["Weather"] = pd.DataFrame({"Weather": list(data)})
+    return biggest_cities
 
-    data = sorted(get_min_and_max_temp_per_day(data), key=lambda x: x["date"])
 
-    x = [datetime.datetime.fromtimestamp(day["date"]) for day in data]
-    y_min = [day["min"] for day in data]
-    y_max = [day["max"] for day in data]
+def get_weather(threads) -> callable:
+    def wrapper(df_row: pd.Series) -> pd.DataFrame:
+        print("started", df_row["City"])
+        return pd.DataFrame(
+            {
+                day_weather["date"]: [day_weather["min"], day_weather["max"]]
+                for day_weather in (
+                    get_min_and_max_temp_per_day(
+                        get_all_weather(
+                            df_row["Latitude"], df_row["Longitude"], threads
+                        )
+                    )
+                )
+            },
+            index=["min", "max"],
+        )
 
-    import matplotlib.pyplot as plt
-
-    plt.plot(x, y_min)
-    plt.plot(x, y_max)
-    plt.show()
-
-    # with open('get_all_weather_return.json', 'w') as file:
-    #     json.dump(data, file, indent=4)
+    return wrapper
