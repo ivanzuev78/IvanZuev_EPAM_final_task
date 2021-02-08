@@ -92,7 +92,6 @@ def get_all_weather_df(biggest_cities: pd.DataFrame, max_threads) -> pd.DataFram
 
 def get_weather(threads) -> callable:
     def wrapper(df_row: pd.Series) -> pd.DataFrame:
-        print("started", df_row["City"])
         return pd.DataFrame(
             {
                 day_weather["date"]: [day_weather["min"], day_weather["max"]]
