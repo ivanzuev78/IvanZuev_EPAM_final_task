@@ -9,6 +9,7 @@ from geo_funcs.geo_funcs import (
     get_biggest_city_df,
 )
 from reading_data.read_zip import read_csv_from_zip
+from weather_funcs.graph_funcs import create_all_weather_graphics
 from weather_funcs.weather_forecast import get_all_weather_df
 
 if __name__ == "__main__":
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     # Обогощаем большие города погодой
     biggest_cities_df = get_all_weather_df(biggest_cities_df, max_threads=args.threads)
     # Рисуем графики по наибольшим городам
-
+    create_all_weather_graphics(biggest_cities_df, args.outdir)
     # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
