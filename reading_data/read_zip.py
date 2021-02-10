@@ -1,5 +1,6 @@
-import os
-from zipfile import ZipFile
+import sys
+from typing import Optional
+from zipfile import BadZipFile, ZipFile
 
 import pandas as pd
 
@@ -12,23 +13,34 @@ def read_csv_from_zip(
     :param path: path to hotels.zip
     :return:
     """
-    original_path = os.getcwd()
-    os.chdir(path)
 
-    myzip = ZipFile("hotels.zip", "r")
     read_date = []
+    try:
+        with ZipFile(path, "r") as myzip:
+            files_list = [file for file in myzip.namelist() if file.endswith(".csv")]
 
-    for filename in myzip.namelist():
-        myzip.extract(filename)
-        file = open(filename, encoding="utf8")
-        read_date.append(filter_hotels(pd.read_csv(file)).dropna())
-        file.close()
+            for filename in files_list:
+                try:
+                    file = myzip.open(filename)
+                except UnicodeDecodeError:
+                    sys.stderr.write(f"Some problems with encoding of {filename}")
+                    continue
+                filtered_df = filter_hotels(pd.read_csv(file))
 
-    os.chdir(original_path)
+                if filtered_df is None:
+                    sys.stderr.write(f"Some problems with colomns of {filename}")
+                    continue
+                read_date.append(filtered_df.dropna().drop(columns=["Id"]))
+    except BadZipFile:
+        sys.exit("File is not a zip file")
+
+    if not read_date:
+        sys.exit("No valid information in zip file")
+
     return pd.concat(read_date, ignore_index=True)
 
 
-def filter_hotels(hotels_df: pd.DataFrame) -> pd.DataFrame:
+def filter_hotels(hotels_df: pd.DataFrame) -> Optional[pd.DataFrame]:
     """
     Filter hotels data and create dict.
     Checks:
@@ -38,19 +50,30 @@ def filter_hotels(hotels_df: pd.DataFrame) -> pd.DataFrame:
 
     :return: pd.DataFrame
     """
+    if any(
+        map(
+            lambda param: param not in hotels_df.keys(),
+            ("Country", "City", "Latitude", "Longitude"),
+        )
+    ):
+        return None
+
     indexes_to_del = []
+
     for index, hotel in enumerate(hotels_df.iloc):
         try:
-            latitude = float(hotel["Latitude"])
-            longitude = float(hotel["Longitude"])
-            if latitude > 90 or latitude < -90:
-                raise ValueError
-            if longitude > 180 or longitude < -180:
-                raise ValueError
+            float(hotel["Latitude"])
+            float(hotel["Longitude"])
         except ValueError:
             indexes_to_del.append(index)
             continue
-
-    return hotels_df.drop(
+    hotels_df = hotels_df.drop(
         indexes_to_del,
     )
+
+    return hotels_df.loc[
+        (hotels_df["Latitude"].astype("float") >= -90)
+        & (hotels_df["Latitude"].astype("float") <= 90)
+        & (hotels_df["Longitude"].astype("float") >= -180)
+        & (hotels_df["Longitude"].astype("float") <= 180)
+    ]
