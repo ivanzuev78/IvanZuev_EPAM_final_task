@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import sys
 from pathlib import Path
@@ -10,6 +11,12 @@ from analyse_funcs.sorting_funcs import (
 from geo_funcs.geo_funcs import (
     add_address_to_all_hotels_in_big_cities,
     get_biggest_city_df,
+)
+from post_processing.post_process_funcs import (
+    get_city_and_day_with_highest_temp,
+    get_city_and_day_with_highest_temp_delta,
+    get_city_and_day_with_lowest_temp,
+    get_city_with_highest_all_days_delta,
 )
 from reading_data.read_zip import read_csv_from_zip
 from weather_funcs.graph_funcs import create_all_weather_graphics
@@ -63,6 +70,27 @@ if __name__ == "__main__":
     # Рисуем графики по наибольшим городам
     create_all_weather_graphics(biggest_cities_df, args.outdir)
 
-    # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
+    # Сохраняем данные пост-процессинга
+    with open(outdir / "post_process.json", "w") as f:
+        json.dump(
+            {
+                "city_and_day_with_highest_temp": get_city_and_day_with_highest_temp(
+                    biggest_cities_df
+                ),
+                "city_and_day_with_lowest_temp": get_city_and_day_with_lowest_temp(
+                    biggest_cities_df
+                ),
+                "city_and_day_with_highest_temp_delta": get_city_and_day_with_highest_temp_delta(
+                    biggest_cities_df
+                ),
+                "city_with_highest_all_days_delta": get_city_with_highest_all_days_delta(
+                    biggest_cities_df
+                ),
+            },
+            f,
+            indent=4,
+        )
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
+
+    # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом

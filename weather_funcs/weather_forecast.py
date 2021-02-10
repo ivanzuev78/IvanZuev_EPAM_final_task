@@ -92,18 +92,15 @@ def get_all_weather_df(biggest_cities: pd.DataFrame, max_threads) -> pd.DataFram
 
 def get_weather(threads) -> callable:
     def wrapper(df_row: pd.Series) -> pd.DataFrame:
+        weather = get_min_and_max_temp_per_day(
+            get_all_weather(df_row["Latitude"], df_row["Longitude"], threads)
+        )
         return pd.DataFrame(
             {
-                day_weather["date"]: [day_weather["min"], day_weather["max"]]
-                for day_weather in (
-                    get_min_and_max_temp_per_day(
-                        get_all_weather(
-                            df_row["Latitude"], df_row["Longitude"], threads
-                        )
-                    )
-                )
+                "max": [day_weather["max"] for day_weather in weather],
+                "min": [day_weather["min"] for day_weather in weather],
             },
-            index=["min", "max"],
+            index=[day_weather["date"] for day_weather in weather],
         )
 
     return wrapper
