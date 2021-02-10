@@ -4,7 +4,9 @@ from zipfile import ZipFile
 import pandas as pd
 
 
-def read_csv_from_zip(path: str) -> pd.DataFrame:
+def read_csv_from_zip(
+    path: str,
+) -> pd.DataFrame:
     """
     Unpack .zip file, read all .csv files, filter invalid data and return dataframe.
     :param path: path to hotels.zip

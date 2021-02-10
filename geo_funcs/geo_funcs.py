@@ -1,5 +1,5 @@
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Dict, Optional
+from typing import Optional
 
 import pandas as pd
 from geopy import Bing
@@ -15,7 +15,7 @@ def get_address_by_position(latitude: float, longitude: float) -> Optional[str]:
 
 
 def get_address(df_series: pd.Series) -> str:
-    return get_address_by_position(df_series["Latitude"], df_series["Longitude"])
+    return get_address_by_position(df_series[1]["Latitude"], df_series[1]["Longitude"])
 
 
 def add_address_to_one_hotel(df: pd.DataFrame) -> None:
@@ -24,24 +24,24 @@ def add_address_to_one_hotel(df: pd.DataFrame) -> None:
     :param hotel:
     :return: None
     """
-    df["Address"] = df.apply(get_address, axis=1)
+    df["Address"] = df[1].apply(get_address)
 
 
 def add_address_to_all_hotels_in_big_cities(
-    dict_of_sorted_df: Dict, big_cities: pd.Series, max_threads
+    biggest_cities_df: pd.DataFrame, biggest_cities_series: pd.Series, max_threads
 ) -> None:
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
-        pool.map(
-            add_address_to_one_hotel,
-            (dict_of_sorted_df[country][city] for country, city in big_cities.items()),
+        biggest_cities_df["Address"] = pd.Series(
+            pool.map(get_address, biggest_cities_df.iterrows())
         )
+        return biggest_cities_df
 
 
-def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_dict_of_df: Dict):
+def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
     """
 
     :param big_cities_df:
-    :param sorted_hotels_dict_of_df:
+    :param sorted_hotels_df:
     :return:
     """
     return pd.DataFrame(
@@ -49,18 +49,30 @@ def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_dict_of_df: 
             "Country": [country for country, _ in big_cities_series.items()],
             "City": [city for _, city in big_cities_series.items()],
             "Latitude": [
-                get_middle(sorted_hotels_dict_of_df[country][city], "Latitude")
+                get_center(
+                    sorted_hotels_df.loc[
+                        (sorted_hotels_df["Country"] == country)
+                        & (sorted_hotels_df["City"] == city)
+                    ],
+                    "Latitude",
+                )
                 for country, city in big_cities_series.items()
             ],
             "Longitude": [
-                get_middle(sorted_hotels_dict_of_df[country][city], "Longitude")
+                get_center(
+                    sorted_hotels_df.loc[
+                        (sorted_hotels_df["Country"] == country)
+                        & (sorted_hotels_df["City"] == city)
+                    ],
+                    "Longitude",
+                )
                 for country, city in big_cities_series.items()
             ],
         }
     )
 
 
-def get_middle(df, param):
+def get_center(df, param):
     return (
         float(max(df[param], key=lambda x: float(x)))
         + float(min(df[param], key=lambda x: float(x)))
