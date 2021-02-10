@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import pickle
 import sys
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from post_processing.post_process_funcs import (
     get_city_and_day_with_lowest_temp,
     get_city_with_highest_all_days_delta,
 )
+from post_processing.save_funcs import save_hotels_df
 from reading_data.read_zip import read_csv_from_zip
 from weather_funcs.graph_funcs import create_all_weather_graphics
 from weather_funcs.weather_forecast import get_all_weather_df
@@ -71,7 +73,7 @@ if __name__ == "__main__":
     create_all_weather_graphics(biggest_cities_df, args.outdir)
 
     # Сохраняем данные пост-процессинга
-    with open(outdir / "post_process.json", "w") as f:
+    with open(outdir / "post_process.json", "w") as file:
         json.dump(
             {
                 "city_and_day_with_highest_temp": get_city_and_day_with_highest_temp(
@@ -87,10 +89,13 @@ if __name__ == "__main__":
                     biggest_cities_df
                 ),
             },
-            f,
+            file,
             indent=4,
         )
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования
+    with open(outdir / "biggest_cities_df", "wb") as file:
+        pickle.dump(biggest_cities_df, file)
 
     # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
+    save_hotels_df(biggest_cities_hotels_df, biggest_cities_series, outdir)
