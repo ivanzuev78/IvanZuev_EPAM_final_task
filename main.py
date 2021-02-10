@@ -4,7 +4,10 @@ from analyse_funcs.sorting_funcs import (
     get_biggest_cities_hotels_df,
     get_biggest_cities_series,
 )
-from geo_funcs.geo_funcs import get_biggest_city_df
+from geo_funcs.geo_funcs import (
+    add_address_to_all_hotels_in_big_cities,
+    get_biggest_city_df,
+)
 from reading_data.read_zip import read_csv_from_zip
 from weather_funcs.graph_funcs import create_all_weather_graphics
 from weather_funcs.weather_forecast import get_all_weather_df
@@ -28,7 +31,7 @@ if __name__ == "__main__":
         add_appid(args.appid)
 
     # Считываем и сортируем отели
-    hotels_df = read_csv_from_zip(args.indir)
+    hotels_df = read_csv_from_zip(args.input_file)
 
     # Отели только больших городов
     biggest_cities_hotels_df = get_biggest_cities_hotels_df(hotels_df)
@@ -42,11 +45,16 @@ if __name__ == "__main__":
     )
 
     # Доавляем адресс к каждому отелю в большом городе
+    add_address_to_all_hotels_in_big_cities(
+        biggest_cities_hotels_df, max_threads=args.threads
+    )
 
     # Обогощаем большие города погодой
     biggest_cities_df = get_all_weather_df(biggest_cities_df, max_threads=args.threads)
+
     # Рисуем графики по наибольшим городам
     create_all_weather_graphics(biggest_cities_df, args.outdir)
+
     # Сохраняем список отелей в формате CSV в файлах, содержащих не более 100 записей в каждом
 
     # Сохраняем полученную информацию по центру в произвольном формате, удобном для последующего использования

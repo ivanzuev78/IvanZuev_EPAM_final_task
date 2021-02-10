@@ -28,13 +28,12 @@ def add_address_to_one_hotel(df: pd.DataFrame) -> None:
 
 
 def add_address_to_all_hotels_in_big_cities(
-    biggest_cities_df: pd.DataFrame, biggest_cities_series: pd.Series, max_threads
+    biggest_cities_df: pd.DataFrame, max_threads
 ) -> None:
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
         biggest_cities_df["Address"] = pd.Series(
             pool.map(get_address, biggest_cities_df.iterrows())
         )
-        return biggest_cities_df
 
 
 def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
