@@ -18,15 +18,6 @@ def get_address(df_series: pd.Series) -> str:
     return get_address_by_position(df_series[1]["Latitude"], df_series[1]["Longitude"])
 
 
-def add_address_to_one_hotel(df: pd.DataFrame) -> None:
-    """
-    Get hotel by link and add address to it.
-    :param hotel:
-    :return: None
-    """
-    df["Address"] = df[1].apply(get_address)
-
-
 def add_address_to_all_hotels_in_big_cities(
     biggest_cities_df: pd.DataFrame, max_threads
 ) -> None:

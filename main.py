@@ -1,4 +1,7 @@
 import argparse
+import os
+import sys
+from pathlib import Path
 
 from analyse_funcs.sorting_funcs import (
     get_biggest_cities_hotels_df,
@@ -16,14 +19,19 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Hotels address and weather handler")
     parser.add_argument("input_file", type=str, help="Input dir")
-    parser.add_argument("outdir", type=str, help="Output dir")
+    parser.add_argument("--outdir", type=str, help="Output dir", default="/output_data")
     parser.add_argument(
-        "--threads", type=int, help="Number of threads. Default: 32", default=32
+        "--threads", type=int, help="Number of threads. Default: 64", default=64
     )
     parser.add_argument("--appid", type=str, help="Appid to get weather")
     args = parser.parse_args()
 
     # Tут будет обработка аргуметнов командной строки
+    if not os.path.exists(args.input_file):
+        sys.exit(f"Cannot find file with hotels: invalid '{args.input_file}'")
+
+    outdir = Path(args.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
 
     if args.appid:
         from weather_funcs.appid import add_appid
