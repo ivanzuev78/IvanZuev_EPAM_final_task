@@ -1,20 +1,20 @@
-from geo_funcs import get_city_center
+import pandas as pd
+
+from geo_funcs.geo_funcs import get_top_city_df
 
 
 def test_get_city_center():
-    column_names = ["Id", "Name", "Country", "City", "Latitude", "Longitude"]
-    hotels_list = [
-        ["1", "min_latitude", "US", "City", 0, 12.2345],
-        ["2", "max_latitude", "US", "City", 90, 42],
-        ["3", "min_longitude", "US", "City", 23, 0],
-        ["4", "max_longitude", "US", "City", 55, 90],
-        ["5", "Name", "US", "City", 78, 74.999],
-        ["6", "Name", "US", "City", 33, 59.001],
-        ["7", "Name", "US", "City", 89, 12],
-    ]
-    hotels = [
-        {col: col_value for col, col_value in zip(column_names, hotel)}
-        for hotel in hotels_list
-    ]
+    cities_series = pd.Series(["City"], index=["US"])
+    hotels = pd.DataFrame(
+        {
+            "Country": ["US" for _ in range(7)],
+            "City": ["City" for _ in range(7)],
+            "Latitude": [0, 90, 23, 55, 78, 33, 89],
+            "Longitude": [0, 89, 23, 55, 78, 33, 90],
+        }
+    )
 
-    assert get_city_center(hotels) == (45, 45)
+    result = get_top_city_df(cities_series, hotels)
+
+    assert result["Latitude"][0] == 45
+    assert result["Longitude"][0] == 45
