@@ -16,11 +16,9 @@ class AppId:
     {'appid': { 'YYYY-MM-DD" : numb of usage this day } }
     """
 
-    def __init__(self, path_to_appid_json: Path, appid: str = None):
+    def __init__(self, path_to_appid_json: Path):
         self.path_to_appid_json = path_to_appid_json
         self.appid_data = self.load_appid()
-        if appid is not None:
-            self.add_appid(appid)
         self.clean_appid_old_date()
 
     def load_appid(self) -> Dict:
@@ -43,8 +41,8 @@ class AppId:
                             raise ValueError(f"numb of usage {appid} is not 'int'")
                         if appid_data[appid][date] < 0:
                             raise ValueError(f"numb of usage {appid} < 0")
+                return appid_data
             except Exception:
-                # TODO: add message to log
                 return {}
         return {}
 
@@ -71,9 +69,6 @@ class AppId:
 
         if appid:
             self.save_appid_data()
-        else:
-            # TODO: add message to log
-            pass
 
         return appid
 

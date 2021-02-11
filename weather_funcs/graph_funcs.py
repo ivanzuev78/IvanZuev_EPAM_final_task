@@ -8,6 +8,9 @@ import pandas as pd
 def create_graph_with_min_and_max_temp(
     weather_df: pd.DataFrame, output_folder: Path, country: str, city: str
 ) -> None:
+    """
+    Create one weather graphic and save it in {output_folder}/{Country}/{City}/weather_{country}_{city}.jpg
+    """
     x = [datetime.datetime.fromtimestamp(int(day)) for day in weather_df.index]
     plt.plot(x, weather_df["max"], label="max temperature", color="r")
     plt.plot(x, weather_df["min"], label="min temperature", color="b")
@@ -26,17 +29,11 @@ def create_graph_with_min_and_max_temp(
     plt.clf()
 
 
-def create_all_weather_graphics(biggest_cities_df: pd.DataFrame, output_folder: str):
+def create_weather_graphics(biggest_cities_df: pd.DataFrame, output_folder: Path):
     """
-
-    :param output_folder:
-    :param biggest_cities_df:
-    :return:
+    Create all weather graphics and save them in {output_folder}/{Country}/{City}
     """
-
-    [
+    for row in biggest_cities_df.iterrows():
         create_graph_with_min_and_max_temp(
             row[1]["Weather"], output_folder, row[1]["Country"], row[1]["City"]
         )
-        for row in biggest_cities_df.iterrows()
-    ]

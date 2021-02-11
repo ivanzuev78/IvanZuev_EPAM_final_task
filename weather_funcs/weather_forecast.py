@@ -10,6 +10,9 @@ import requests
 def get_current_and_forecast_weather(
     latitude: float, longitude: float, appid: Callable
 ) -> Dict:
+    """
+    Get current and forecast weather from "openweathermap.org"
+    """
     weather_response = requests.get(
         f"http://api.openweathermap.org/data/2.5/onecall?"
         f"lat={latitude}&lon={longitude}&APPID={appid()}&units=metric"
@@ -20,6 +23,9 @@ def get_current_and_forecast_weather(
 def get_one_day_historical_weather(
     latitude: float, longitude: float, day: int, appid: Callable
 ) -> Dict:
+    """
+    Get historical weather for 1 day from "openweathermap.org"
+    """
     weather_response = requests.get(
         f"http://api.openweathermap.org/data/2.5/onecall/timemachine?"
         f"lat={latitude}&lon={longitude}&dt={day}&APPID={appid()}&units=metric"
@@ -30,6 +36,10 @@ def get_one_day_historical_weather(
 def get_all_historical_weather(
     latitude: float, longitude: float, threads: int, appid: Callable
 ):
+    """
+    Collect all historical weather
+    """
+
     def get_one_day_hist_weather(
         latitude: float, longitude: float, get_appid: Callable
     ):
@@ -50,18 +60,26 @@ def get_all_historical_weather(
 def get_all_weather(
     latitude: float, longitude: float, threads: int, appid: Callable
 ) -> Dict:
-
+    """
+    Collect all weather for one place (latitude, longitude)
+    Weather consists of:
+    1) 5 days historical weather
+    2) Current weather
+    3) 5 days weather forecast
+    """
     current_and_forecast_weather = get_current_and_forecast_weather(
         latitude, longitude, appid
     )
     return {
         "Historical": get_all_historical_weather(latitude, longitude, threads, appid),
-        "Current": current_and_forecast_weather["current"],
         "Forecast": current_and_forecast_weather["daily"],
     }
 
 
 def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
+    """
+    Analise all collected raw weather data
+    """
     weather_date = []
     for day in weather["Historical"]:
         sorted_day_by_temperature = sorted(day["hourly"], key=lambda x: x["temp"])
@@ -87,6 +105,29 @@ def get_min_and_max_temp_per_day(weather: Dict) -> List[Dict]:
 def get_all_weather_df(
     biggest_cities: pd.DataFrame, max_threads: int, appid: Callable
 ) -> pd.DataFrame:
+    """
+    Get all weather from openweathermap.org multithreaded
+    """
+
+    def get_weather(threads: int, appid: Callable) -> callable:
+        """
+        Helper function for ThreadPoolExecutor
+        """
+
+        def wrapper(df_row: pd.Series) -> pd.DataFrame:
+            weather = get_min_and_max_temp_per_day(
+                get_all_weather(df_row["Latitude"], df_row["Longitude"], threads, appid)
+            )
+            return pd.DataFrame(
+                {
+                    "max": [day_weather["max"] for day_weather in weather],
+                    "min": [day_weather["min"] for day_weather in weather],
+                },
+                index=[day_weather["date"] for day_weather in weather],
+            )
+
+        return wrapper
+
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
         data = pool.map(
             get_weather(max_threads, appid),
@@ -95,19 +136,3 @@ def get_all_weather_df(
 
     biggest_cities["Weather"] = pd.DataFrame({"Weather": list(data)})
     return biggest_cities
-
-
-def get_weather(threads: int, appid: Callable) -> callable:
-    def wrapper(df_row: pd.Series) -> pd.DataFrame:
-        weather = get_min_and_max_temp_per_day(
-            get_all_weather(df_row["Latitude"], df_row["Longitude"], threads, appid)
-        )
-        return pd.DataFrame(
-            {
-                "max": [day_weather["max"] for day_weather in weather],
-                "min": [day_weather["min"] for day_weather in weather],
-            },
-            index=[day_weather["date"] for day_weather in weather],
-        )
-
-    return wrapper

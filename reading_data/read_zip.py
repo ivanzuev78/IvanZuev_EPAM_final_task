@@ -9,11 +9,8 @@ def read_csv_from_zip(
     path: str,
 ) -> pd.DataFrame:
     """
-    Unpack .zip file, read all .csv files, filter invalid data and return dataframe.
-    :param path: path to hotels.zip
-    :return:
+    Unpack .zip file, read all .csv files, filter invalid data and return dataframe
     """
-
     read_date = []
     try:
         with ZipFile(path, "r") as myzip:
@@ -32,23 +29,23 @@ def read_csv_from_zip(
                     continue
                 read_date.append(filtered_df.dropna().drop(columns=["Id"]))
     except BadZipFile:
-        sys.exit("File is not a zip file")
+        sys.stderr.write("File is not a zip file")
+        sys.exit(1)
 
     if not read_date:
-        sys.exit("No valid information in zip file")
+        sys.stderr.write("No valid information in zip file")
+        sys.exit(1)
 
     return pd.concat(read_date, ignore_index=True)
 
 
 def filter_hotels(hotels_df: pd.DataFrame) -> Optional[pd.DataFrame]:
     """
-    Filter hotels data and create dict.
+    Filter hotels data and create dict
     Checks:
     1) Latitude and Longitude are float
     2) Latitude belongs to the interval [-90, 90]
     3) Longitude belongs to the interval [-180, 180]
-
-    :return: pd.DataFrame
     """
     if any(
         map(
@@ -58,17 +55,17 @@ def filter_hotels(hotels_df: pd.DataFrame) -> Optional[pd.DataFrame]:
     ):
         return None
 
-    indexes_to_del = []
-
-    for index, hotel in enumerate(hotels_df.iloc):
-        try:
-            float(hotel["Latitude"])
-            float(hotel["Longitude"])
-        except ValueError:
-            indexes_to_del.append(index)
-            continue
-    hotels_df = hotels_df.drop(
-        indexes_to_del,
+    hotels_df["Latitude"] = (
+        hotels_df["Latitude"]
+        .astype("str")
+        .str.extract(r"(-?\d+\.\d+)", expand=False)
+        .astype("float")
+    )
+    hotels_df["Longitude"] = (
+        hotels_df["Longitude"]
+        .astype("str")
+        .str.extract(r"(-?\d+\.\d+)", expand=False)
+        .astype("float")
     )
 
     return hotels_df.loc[
