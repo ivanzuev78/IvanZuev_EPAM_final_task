@@ -50,3 +50,11 @@ Also you can specify max number of threads. Use:
 python main.py --threads {max number of threads}
 ~~~
 Default number of threads is 64.
+
+### Test
+
+You can run tests using:
+
+~~~
+python -m pytest
+~~~
