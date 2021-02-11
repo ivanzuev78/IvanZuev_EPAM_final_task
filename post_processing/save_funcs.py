@@ -15,7 +15,10 @@ from post_processing.post_process_funcs import (
 def save_hotels_df(
     df: pd.DataFrame, big_cities_series: pd.Series, output_folder: Path
 ) -> None:
-
+    """
+    Save hotels in top cities in .csv in /{output_folder}/{country}/{city}
+    One .csv contains less than 100 hotels
+    """
     for country, city in big_cities_series.items():
         df_to_save = df.loc[
             (df["Country"] == country) & (df["City"] == city)
@@ -53,5 +56,8 @@ def save_post_data(top_cities_df: pd.DataFrame, outdir: Path):
 
 
 def save_top_cities_df(top_cities_df: pd.DataFrame, outdir: Path):
+    """
+    Save top_cities_df in pickle
+    """
     with open(outdir / "top_cities.df", "wb") as file:
         pickle.dump(top_cities_df, file)

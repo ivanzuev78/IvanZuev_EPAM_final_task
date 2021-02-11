@@ -5,7 +5,12 @@ import pandas as pd
 from geopy import Bing
 
 
-def get_address_by_position(latitude: float, longitude: float) -> Optional[str]:
+def get_address_by_position(df_series: pd.Series) -> Optional[str]:
+    """
+    Get address by latitude and longitude
+    """
+    latitude = df_series[1]["Latitude"]
+    longitude = df_series[1]["Longitude"]
     location = Bing(
         "AjwkHHtQlWLTZW2xwqx3CM2MYHH2slk8IiDCJERgAL_3Uax_bHGOgVZe_1iaPUXH"
     ).reverse(f"{latitude}, {longitude}")
@@ -14,30 +19,26 @@ def get_address_by_position(latitude: float, longitude: float) -> Optional[str]:
     return None
 
 
-def get_address(df_series: pd.Series) -> str:
-    return get_address_by_position(df_series[1]["Latitude"], df_series[1]["Longitude"])
-
-
-def add_address_to_all_hotels_in_big_cities(
-    biggest_cities_df: pd.DataFrame, max_threads
+def add_address_to_hotels_in_top_cities(
+    top_cities_df: pd.DataFrame, max_threads
 ) -> None:
+    """
+    add address to all hotels in top cities using side effect
+    """
     with ThreadPoolExecutor(max_workers=max_threads) as pool:
-        biggest_cities_df["Address"] = pd.Series(
-            pool.map(get_address, biggest_cities_df.iterrows())
+        top_cities_df["Address"] = pd.Series(
+            pool.map(get_address_by_position, top_cities_df.iterrows())
         )
 
 
-def get_top_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
+def get_top_city_df(top_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
     """
-
-    :param big_cities_df:
-    :param sorted_hotels_df:
-    :return:
+    Analise all hotels in top cities and return dataframe with cities and its latitude, longitude
     """
     return pd.DataFrame(
         {
-            "Country": [country for country, _ in big_cities_series.items()],
-            "City": [city for _, city in big_cities_series.items()],
+            "Country": [country for country, _ in top_cities_series.items()],
+            "City": [city for _, city in top_cities_series.items()],
             "Latitude": [
                 get_center(
                     sorted_hotels_df.loc[
@@ -46,7 +47,7 @@ def get_top_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame
                     ],
                     "Latitude",
                 )
-                for country, city in big_cities_series.items()
+                for country, city in top_cities_series.items()
             ],
             "Longitude": [
                 get_center(
@@ -56,13 +57,16 @@ def get_top_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame
                     ],
                     "Longitude",
                 )
-                for country, city in big_cities_series.items()
+                for country, city in top_cities_series.items()
             ],
         }
     )
 
 
 def get_center(df, param):
+    """
+    Get center latitude or longitude using data in dataframe
+    """
     return (
         float(max(df[param], key=lambda x: float(x)))
         + float(min(df[param], key=lambda x: float(x)))
