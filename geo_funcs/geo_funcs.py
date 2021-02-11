@@ -27,7 +27,7 @@ def add_address_to_all_hotels_in_big_cities(
         )
 
 
-def get_biggest_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
+def get_top_city_df(big_cities_series: pd.Series, sorted_hotels_df: pd.DataFrame):
     """
 
     :param big_cities_df:

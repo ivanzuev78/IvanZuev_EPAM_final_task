@@ -77,9 +77,7 @@ def add_appid(appid: str) -> None:
 
 def close_appid_for_this_day(appid: str) -> None:
     """
-    If there are some problems with appid, it can be closed for this day.
-    :param appid: str
-    :return: None
+    If there are some problems with appid, it can be closed for this day
     """
     global all_appid_data
     all_appid_data[appid][str(datetime.datetime.utcnow().date())] = 1000

@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def get_biggest_cities_hotels_df(df: pd.DataFrame) -> pd.DataFrame:
+def get_top_cities_hotels_df(df: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(
         (
             max(
@@ -18,6 +18,6 @@ def get_biggest_cities_hotels_df(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def get_biggest_cities_series(df: pd.DataFrame) -> pd.Series:
+def get_top_cities_series(df: pd.DataFrame) -> pd.Series:
     gb = df.groupby(["Country", "City"])
     return pd.Series((row[0][1] for row in gb), index=(row[0][0] for row in gb))

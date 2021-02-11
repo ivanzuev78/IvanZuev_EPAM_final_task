@@ -5,7 +5,7 @@ import pandas as pd
 
 
 # noinspection PyTypeChecker
-def get_city_and_day_with_highest_temp(df: pd.DataFrame) -> Tuple:
+def get_city_day_max_temp(df: pd.DataFrame) -> Tuple:
     data = max(
         df.apply(
             lambda row: (
@@ -26,7 +26,7 @@ def get_city_and_day_with_highest_temp(df: pd.DataFrame) -> Tuple:
 
 
 # noinspection PyTypeChecker
-def get_city_and_day_with_lowest_temp(df: pd.DataFrame) -> Tuple:
+def get_city_day_min_temp(df: pd.DataFrame) -> Tuple:
 
     data = min(
         df.apply(
@@ -48,7 +48,7 @@ def get_city_and_day_with_lowest_temp(df: pd.DataFrame) -> Tuple:
 
 
 # noinspection PyTypeChecker
-def get_city_and_day_with_highest_temp_delta(df: pd.DataFrame) -> Tuple:
+def get_city_day_max_temp_delta_one_day(df: pd.DataFrame) -> Tuple:
     data = max(
         df.apply(
             lambda row: (
@@ -72,7 +72,7 @@ def get_city_and_day_with_highest_temp_delta(df: pd.DataFrame) -> Tuple:
 
 
 # noinspection PyTypeChecker
-def get_city_with_highest_all_days_delta(df: pd.DataFrame):
+def get_city_day_max_temp_delta_all_days(df: pd.DataFrame) -> Tuple:
     return max(
         df.apply(
             lambda row: (
